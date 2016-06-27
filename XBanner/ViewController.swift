@@ -10,14 +10,31 @@ import UIKit
 
 class ViewController: UIViewController {
 
+    @IBOutlet weak var banner: XBanner!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+        
+        var arr:[XBannerModel] = []
+        for i in 1...4
+        {
+            let model = XBannerModel()
+            model.image = "\(i).jpg"
+            arr.append(model)
+        }
+        
+        banner.bannerArr = arr
+        
+       banner.click { (model) in
+        
+        print(model.image)
+        
+        }
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+       
     }
 
 
