@@ -15,37 +15,85 @@ class XBannerModel:NSObject
     var obj:AnyObject?
 }
 
-typealias XBannerBlock = (XBannerModel)->Void
-
-class XBanner: UIView ,UICollectionViewDelegate,UICollectionViewDataSource{
-
-    @IBOutlet weak var collect: UICollectionView!
+class XTimer:NSObject
+{
+    private var timer:dispatch_source_t!
     
-    @IBOutlet weak var titleH: NSLayoutConstraint!
-    
-    @IBOutlet weak var titleView: UIView!
-    
-    @IBOutlet weak var btitle: UILabel!
-    
-    @IBOutlet weak var page: UIPageControl!
-    
-    private var block:XBannerBlock?
-    
-    func click(b:XBannerBlock)
+    init(time:Double,block:dispatch_block_t)
     {
-        self.block = b
+        super.init()
+        
+        // 获得队列
+        let queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+
+        // 创建一个定时器(dispatch_source_t本质还是个OC对象)
+        timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, queue)
+        
+        // 设置定时器的各种属性（几时开始任务，每隔多长时间执行一次）
+        // GCD的时间参数，一般是纳秒（1秒 == 10的9次方纳秒）
+        // 何时开始执行第一个任务
+        // dispatch_time(DISPATCH_TIME_NOW, 1.0 * NSEC_PER_SEC) 比当前时间晚3秒
+        let start = dispatch_time(DISPATCH_TIME_NOW, Int64(1.0 * Double(NSEC_PER_SEC)));
+        let interval = UInt64(1.0 * Double(NSEC_PER_SEC))
+        dispatch_source_set_timer(timer, start, interval, 0)
+
+        dispatch_source_set_event_handler(timer, block)
+        
+    }
+    
+    func start()
+    {
+        dispatch_resume(timer)
+    }
+    
+    func cancel()
+    {
+        dispatch_source_cancel(timer)
+        timer=nil
+    }
+    
+    deinit
+    {
+        print("XTimer deinit !!!!!!!!")
+    }
+}
+
+typealias XBannerClickBlock = (XBannerModel)->Void
+
+typealias XBannerIndexBlock = (Int,XBannerModel)->Void
+
+class XBanner: UICollectionView ,UICollectionViewDelegate,UICollectionViewDataSource{
+
+    let flowLayout = UICollectionViewFlowLayout()
+    
+    
+    
+    private var clickBlock:XBannerClickBlock?
+    private var indexBlock:XBannerIndexBlock?
+    
+    func click(b:XBannerClickBlock)
+    {
+        clickBlock = b
+    }
+    
+    func nowIndex(b:XBannerIndexBlock)
+    {
+        indexBlock = b
+    }
+    
+    func Block(index i:XBannerIndexBlock,click c:XBannerClickBlock)
+    {
+        indexBlock = i
+        clickBlock = c
     }
     
     var bannerArr:[XBannerModel]=[]
     {
         didSet
         {
-            print(bannerArr.count)
-            page.numberOfPages =  bannerArr.count
-            
+            flowLayout.itemSize = CGSizeZero
             layoutIfNeeded()
             setNeedsLayout()
-            
         }
     }
     
@@ -55,11 +103,12 @@ class XBanner: UIView ,UICollectionViewDelegate,UICollectionViewDataSource{
     {
         didSet
         {
-            page.currentPage = index
+            print("index: \(index)")
             
             if bannerArr.count > 1
             {
-                collect.scrollToItemAtIndexPath(NSIndexPath.init(forRow: index+2, inSection: 0), atScrollPosition: .Left, animated: true)
+                indexBlock?(index,bannerArr[index])
+                scrollToItemAtIndexPath(NSIndexPath.init(forRow: index+2, inSection: 0), atScrollPosition: .Left, animated: true)
             }
             
         }
@@ -69,37 +118,56 @@ class XBanner: UIView ,UICollectionViewDelegate,UICollectionViewDataSource{
     {
         if bannerArr.count > 1
         {
-            index = page.currentPage
+            //index = page.currentPage
         }
     }
     
     func initBanner()
     {
-        let nib = UINib(nibName: "XBanner", bundle: nil)
-        let containerView:UIView=(nib.instantiateWithOwner(self, options: nil))[0] as! UIView
-        let newFrame = CGRectMake(0, 0, self.frame.size.width, self.frame.size.height)
-        containerView.frame = newFrame
-        self.addSubview(containerView)
-      
-        collect.registerClass(UICollectionViewCell.self, forCellWithReuseIdentifier: "cell")
+        flowLayout.scrollDirection = .Horizontal
+        flowLayout.minimumLineSpacing = 0.0
+        flowLayout.minimumInteritemSpacing=0.0
+        flowLayout.itemSize = CGSizeMake(frame.size.width == 0 ? 1 : frame.size.width, frame.size.height == 0 ? 1 : frame.size.height)
+        collectionViewLayout = flowLayout
+
+        pagingEnabled = true
+        layer.masksToBounds=true
+        clipsToBounds = true
         
-        page.addTarget(self, action: #selector(pageClick), forControlEvents: .ValueChanged)
+        backgroundColor = UIColor.whiteColor()
+        registerClass(UICollectionViewCell.self, forCellWithReuseIdentifier: "cell")
+        
+        showsVerticalScrollIndicator = false
+        showsHorizontalScrollIndicator = false
+        
+        delegate = self
+        dataSource = self
+        
+    
+        
+        //page.addTarget(self, action: #selector(pageClick), forControlEvents: .ValueChanged)
         
     }
     
-    override init(frame: CGRect) {
+    override init(frame: CGRect, collectionViewLayout layout: UICollectionViewLayout) {
+        super.init(frame: frame, collectionViewLayout: layout)
         
-        super.init(frame: frame)
-        
-        self.initBanner()
+        initBanner()
         
     }
     
+    init()
+    {
+        super.init(frame: CGRectMake(0, 0, 1, 1), collectionViewLayout: flowLayout)
+        
+        initBanner()
+        
+    }
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         
-        self.initBanner()
+        initBanner()
         
     }
     
@@ -111,17 +179,17 @@ class XBanner: UIView ,UICollectionViewDelegate,UICollectionViewDataSource{
     override func layoutSubviews() {
         super.layoutSubviews()
         
-        let layout = collect?.collectionViewLayout as? UICollectionViewFlowLayout
-        
-        layout?.itemSize = CGSizeMake(frame.size.width, frame.size.height)
-        
-        collect.reloadData()
-        
-        let row:CGFloat = bannerArr.count == 1 ? 0 : 2
-        let w:CGFloat = (row*row+CGFloat(bannerArr.count))*frame.size.width
-        collect.contentSize = CGSizeMake(w, 0)
-        
-        collect.contentOffset.x = frame.size.width * row
+        if flowLayout.itemSize.width != frame.size.width || flowLayout.itemSize.height != frame.size.height
+        {
+            flowLayout.itemSize = CGSizeMake(frame.size.width, frame.size.height)
+            reloadData()
+            
+            let row:CGFloat = bannerArr.count == 1 ? 0 : 2
+            let w:CGFloat = (row*row+CGFloat(bannerArr.count))*frame.size.width
+            contentSize = CGSizeMake(w, 0)
+            
+            contentOffset.x = frame.size.width * row
+        }
         
     }
     
@@ -223,7 +291,7 @@ class XBanner: UIView ,UICollectionViewDelegate,UICollectionViewDataSource{
         
         let i = getTrueIndex(indexPath.row)
         let o = bannerArr[i]
-        block?(o)
+        clickBlock?(o)
     }
     
     

@@ -22,9 +22,17 @@
                                 <rect key="frame" x="90" y="180" width="420" height="240"/>
                                 <color key="backgroundColor" red="1" green="0.50196081400000003" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                             </view>
+                            <pageControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" numberOfPages="3" translatesAutoresizingMaskIntoConstraints="NO" id="YOd-rv-eAD">
+                                <rect key="frame" x="281" y="383" width="39" height="37"/>
+                                <connections>
+                                    <action selector="pageClick:" destination="BYZ-38-t0r" eventType="valueChanged" id="xx9-1G-MzE"/>
+                                </connections>
+                            </pageControl>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstItem="YOd-rv-eAD" firstAttribute="bottom" secondItem="Kbv-8b-2Wr" secondAttribute="bottom" id="Fa4-lE-ixe"/>
+                            <constraint firstItem="YOd-rv-eAD" firstAttribute="centerX" secondItem="Kbv-8b-2Wr" secondAttribute="centerX" id="U1l-wK-JfP"/>
                             <constraint firstItem="Kbv-8b-2Wr" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="Uas-Mt-pph"/>
                             <constraint firstItem="Kbv-8b-2Wr" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="ZFm-mc-VKJ"/>
                             <constraint firstItem="Kbv-8b-2Wr" firstAttribute="width" secondItem="8bC-Xf-vdC" secondAttribute="width" multiplier="0.7" id="b6J-Nw-B04"/>
@@ -33,10 +41,12 @@
                     </view>
                     <connections>
                         <outlet property="banner" destination="Kbv-8b-2Wr" id="6dx-3v-f5l"/>
+                        <outlet property="page" destination="YOd-rv-eAD" id="dTu-u9-OWH"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
+            <point key="canvasLocation" x="487" y="318"/>
         </scene>
     </scenes>
 </document>
