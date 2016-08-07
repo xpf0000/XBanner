@@ -14,11 +14,11 @@
 		171A9CC81D2169AC006E3F14 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 171A9CC61D2169AC006E3F14 /* LaunchScreen.storyboard */; };
 		171A9CD31D2169AC006E3F14 /* XBannerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 171A9CD21D2169AC006E3F14 /* XBannerTests.swift */; };
 		171A9CDE1D2169AC006E3F14 /* XBannerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 171A9CDD1D2169AC006E3F14 /* XBannerUITests.swift */; };
-		171A9CEC1D2169D7006E3F14 /* XBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 171A9CEB1D2169D7006E3F14 /* XBanner.swift */; };
 		171A9CF31D217383006E3F14 /* 4.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 171A9CEF1D217383006E3F14 /* 4.jpg */; };
 		171A9CF41D217383006E3F14 /* 3.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 171A9CF01D217383006E3F14 /* 3.jpg */; };
 		171A9CF51D217383006E3F14 /* 2.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 171A9CF11D217383006E3F14 /* 2.jpg */; };
 		171A9CF61D217383006E3F14 /* 1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 171A9CF21D217383006E3F14 /* 1.jpg */; };
+		174B11301D57275B00D79140 /* XBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 174B112F1D57275B00D79140 /* XBanner.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -52,11 +52,11 @@
 		171A9CD91D2169AC006E3F14 /* XBannerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = XBannerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		171A9CDD1D2169AC006E3F14 /* XBannerUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XBannerUITests.swift; sourceTree = "<group>"; };
 		171A9CDF1D2169AC006E3F14 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		171A9CEB1D2169D7006E3F14 /* XBanner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XBanner.swift; sourceTree = "<group>"; };
 		171A9CEF1D217383006E3F14 /* 4.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 4.jpg; sourceTree = "<group>"; };
 		171A9CF01D217383006E3F14 /* 3.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 3.jpg; sourceTree = "<group>"; };
 		171A9CF11D217383006E3F14 /* 2.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 2.jpg; sourceTree = "<group>"; };
 		171A9CF21D217383006E3F14 /* 1.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 1.jpg; sourceTree = "<group>"; };
+		174B112F1D57275B00D79140 /* XBanner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = XBanner.swift; path = XBanner/XBanner.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -107,13 +107,13 @@
 		171A9CBC1D2169AB006E3F14 /* XBanner */ = {
 			isa = PBXGroup;
 			children = (
+				174B112F1D57275B00D79140 /* XBanner.swift */,
 				171A9CEF1D217383006E3F14 /* 4.jpg */,
 				171A9CF01D217383006E3F14 /* 3.jpg */,
 				171A9CF11D217383006E3F14 /* 2.jpg */,
 				171A9CF21D217383006E3F14 /* 1.jpg */,
 				171A9CBD1D2169AB006E3F14 /* AppDelegate.swift */,
 				171A9CBF1D2169AB006E3F14 /* ViewController.swift */,
-				171A9CEB1D2169D7006E3F14 /* XBanner.swift */,
 				171A9CC11D2169AB006E3F14 /* Main.storyboard */,
 				171A9CC41D2169AB006E3F14 /* Assets.xcassets */,
 				171A9CC61D2169AC006E3F14 /* LaunchScreen.storyboard */,
@@ -208,6 +208,7 @@
 				TargetAttributes = {
 					171A9CB91D2169AB006E3F14 = {
 						CreatedOnToolsVersion = 7.3.1;
+						DevelopmentTeam = QPBSPA49NG;
 					};
 					171A9CCD1D2169AC006E3F14 = {
 						CreatedOnToolsVersion = 7.3.1;
@@ -275,7 +276,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				171A9CEC1D2169D7006E3F14 /* XBanner.swift in Sources */,
+				174B11301D57275B00D79140 /* XBanner.swift in Sources */,
 				171A9CC01D2169AB006E3F14 /* ViewController.swift in Sources */,
 				171A9CBE1D2169AB006E3F14 /* AppDelegate.swift in Sources */,
 			);
@@ -421,11 +422,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = XBanner/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.X.XBanner;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Debug;
 		};
@@ -433,11 +437,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = XBanner/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.X.XBanner;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Release;
 		};
