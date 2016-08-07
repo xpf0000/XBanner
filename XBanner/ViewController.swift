@@ -36,6 +36,9 @@ class ViewController: UIViewController {
         banner.bannerArr = arr
         page.numberOfPages = arr.count
         
+        banner.scrollInterval = 2.0
+        banner.scrollleftToRight = false
+        
        banner.Block(index: { [weak self](index, m) in
         
         self?.page.currentPage = index
