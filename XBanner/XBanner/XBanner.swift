@@ -21,7 +21,7 @@ typealias XBannerIndexBlock = (Int,XBannerModel)->Void
 
 class XBanner: UICollectionView ,UICollectionViewDelegate,UICollectionViewDataSource
 {
-
+    
     let flowLayout = UICollectionViewFlowLayout()
     
     private var clickBlock:XBannerClickBlock?
@@ -29,25 +29,25 @@ class XBanner: UICollectionView ,UICollectionViewDelegate,UICollectionViewDataSo
     private var timer:dispatch_source_t!
     
     var scrollInterval = 0.0
-    {
+        {
         didSet
         {
-                if bannerArr.count > 1
-                {
-                    start()
-                }
+            if bannerArr.count > 1
+            {
+                start()
+            }
         }
     }
     
     var scrollleftToRight = false
         {
-            didSet
+        didSet
+        {
+            if bannerArr.count > 1 && scrollInterval  > 0
             {
-                if bannerArr.count > 1 && scrollInterval  > 0
-                {
-                    start()
-                }
-
+                start()
+            }
+            
         }
     }
     
@@ -68,12 +68,13 @@ class XBanner: UICollectionView ,UICollectionViewDelegate,UICollectionViewDataSo
     }
     
     var bannerArr:[XBannerModel]=[]
-    {
+        {
         didSet
         {
             flowLayout.itemSize = CGSizeMake(1, 1)
             layoutIfNeeded()
             setNeedsLayout()
+            
             if bannerArr.count > 1 && scrollInterval > 0
             {
                 self.start()
@@ -86,7 +87,7 @@ class XBanner: UICollectionView ,UICollectionViewDelegate,UICollectionViewDataSo
     }
     
     var selectIndex = 0
-    {
+        {
         didSet
         {
             if bannerArr.count <= 1 || selectIndex < 0 || selectIndex >= bannerArr.count  {return}
@@ -108,13 +109,13 @@ class XBanner: UICollectionView ,UICollectionViewDelegate,UICollectionViewDataSo
                 
                 return
             }
-  
+            
             scrollToItemAtIndexPath(NSIndexPath.init(forRow: index+2, inSection: 0), atScrollPosition: .Left, animated: true)
         }
     }
     
     private var index:Int = 0
-    {
+        {
         didSet
         {
             if bannerArr.count > 1
@@ -132,13 +133,13 @@ class XBanner: UICollectionView ,UICollectionViewDelegate,UICollectionViewDataSo
         flowLayout.minimumInteritemSpacing=0.0
         flowLayout.itemSize = CGSizeMake(frame.size.width == 0 ? 1 : frame.size.width, frame.size.height == 0 ? 1 : frame.size.height)
         collectionViewLayout = flowLayout
-
+        
         pagingEnabled = true
         layer.masksToBounds=true
         clipsToBounds = true
         
         backgroundColor = UIColor.whiteColor()
-        registerClass(UICollectionViewCell.self, forCellWithReuseIdentifier: "cell")
+        registerClass(UICollectionViewCell.self, forCellWithReuseIdentifier: "XBannerCell")
         
         showsVerticalScrollIndicator = false
         showsHorizontalScrollIndicator = false
@@ -177,7 +178,7 @@ class XBanner: UICollectionView ,UICollectionViewDelegate,UICollectionViewDataSo
     
     override func layoutSubviews() {
         super.layoutSubviews()
-
+        
         if flowLayout.itemSize.width != frame.size.width || flowLayout.itemSize.height != frame.size.height
         {
             if timer != nil{
@@ -191,7 +192,7 @@ class XBanner: UICollectionView ,UICollectionViewDelegate,UICollectionViewDataSo
             let w:CGFloat = (row*row+CGFloat(bannerArr.count))*frame.size.width
             
             let r = (row == 0 ? 0 :  2+CGFloat(index))
-
+            
             contentOffset.x = frame.size.width * r
             
             contentSize = CGSizeMake(w, 0)
@@ -215,15 +216,19 @@ class XBanner: UICollectionView ,UICollectionViewDelegate,UICollectionViewDataSo
     
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         
-        if bannerArr.count == 1
+        if bannerArr.count == 0
         {
-            return 1;
+            return 0
+        }
+        else if bannerArr.count == 1
+        {
+            return 1
         }
         else
         {
             return bannerArr.count+4
         }
-
+        
     }
     
     func getTrueIndex(row:Int)->Int
@@ -256,7 +261,7 @@ class XBanner: UICollectionView ,UICollectionViewDelegate,UICollectionViewDataSo
     
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cell", forIndexPath: indexPath)
+        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("XBannerCell", forIndexPath: indexPath)
         
         for item in cell.contentView.subviews
         {
@@ -272,18 +277,21 @@ class XBanner: UICollectionView ,UICollectionViewDelegate,UICollectionViewDataSo
         
         if let image = o as? String
         {
+            img = UIImageView()
+            img.frame = CGRectMake(0, 0, cell.frame.size.width, cell.frame.size.height)
+            
             if let filePath=NSBundle.mainBundle().pathForResource(image, ofType:"")
             {
                 if NSFileManager.defaultManager().fileExistsAtPath(filePath)
                 {
-                    img = UIImageView()
-                    img.frame = CGRectMake(0, 0, cell.frame.size.width, cell.frame.size.height)
                     (img as! UIImageView).image = UIImage(contentsOfFile: filePath)
                 }
             }
             else
             {
                 //网络图片下载
+                //(img as! UIImageView).useAnimation = false
+                //(img as! UIImageView).url = image
             }
             
         }
@@ -299,7 +307,7 @@ class XBanner: UICollectionView ,UICollectionViewDelegate,UICollectionViewDataSo
         {
             img = image
         }
-
+        
         cell.contentView.addSubview(img)
         
         return cell
@@ -317,8 +325,8 @@ class XBanner: UICollectionView ,UICollectionViewDelegate,UICollectionViewDataSo
     
     func scrollViewDidScroll(scrollView: UIScrollView) {
         
-        if !scrollView.scrollEnabled{return}
-
+        if !scrollView.scrollEnabled || bannerArr.count == 0{return}
+        
         if(scrollView.contentOffset.x <= frame.size.width )
         {
             scrollView.contentOffset.x=CGFloat(1+bannerArr.count)*frame.size.width
@@ -329,16 +337,16 @@ class XBanner: UICollectionView ,UICollectionViewDelegate,UICollectionViewDataSo
             scrollView.contentOffset.x=CGFloat(2)*frame.size.width
         }
         
-            var nowIndex = Int(round(scrollView.contentOffset.x / frame.size.width)) - 2
-
-            nowIndex = nowIndex < 0 ? bannerArr.count-1 : nowIndex
-            nowIndex = nowIndex >= bannerArr.count ?  0 : nowIndex
+        var nowIndex = Int(round(scrollView.contentOffset.x / frame.size.width)) - 2
         
-            if(nowIndex != index)
-            {
-               self.index = nowIndex
-            }
-
+        nowIndex = nowIndex < 0 ? bannerArr.count-1 : nowIndex
+        nowIndex = nowIndex >= bannerArr.count ?  0 : nowIndex
+        
+        if(nowIndex != index)
+        {
+            self.index = nowIndex
+        }
+        
     }
     
     func scrollViewDidEndScrollingAnimation(scrollView: UIScrollView) {
@@ -348,7 +356,7 @@ class XBanner: UICollectionView ,UICollectionViewDelegate,UICollectionViewDataSo
             let x = round(scrollView.contentOffset.x / frame.size.width)
             
             scrollView.contentOffset.x = frame.size.width * x
-
+            
         }
         
     }
@@ -388,21 +396,21 @@ class XBanner: UICollectionView ,UICollectionViewDelegate,UICollectionViewDataSo
         dispatch_source_set_event_handler(timer) {[weak self]()->Void in
             if self == nil {return}
             
-                var i = self!.index
-                
-                if self!.scrollleftToRight == true
-                {
-                    i  -= 1
-                }
-                else
-                {
-                    i += 1
-                }
-                
-                i = i < 0 ? self!.bannerArr.count-1 : i
-                i = i >= self!.bannerArr.count ?  0 : i
+            var i = self!.index
             
-                self!.selectIndex = i
+            if self!.scrollleftToRight == true
+            {
+                i  -= 1
+            }
+            else
+            {
+                i += 1
+            }
+            
+            i = i < 0 ? self!.bannerArr.count-1 : i
+            i = i >= self!.bannerArr.count ?  0 : i
+            
+            self!.selectIndex = i
             
         }
         
@@ -410,5 +418,5 @@ class XBanner: UICollectionView ,UICollectionViewDelegate,UICollectionViewDataSo
         
         
     }
-
+    
 }
